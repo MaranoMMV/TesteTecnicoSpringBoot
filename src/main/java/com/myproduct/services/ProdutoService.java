@@ -20,6 +20,9 @@ public class ProdutoService{
 	private final ProdutoRepository produtoRepository;
 	
 	public Produto saveProduto( Produto produto) {
+		if(produto.getPreco() < 0) {
+			throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,"O valor do numero do preço digitado é negativo e não pode ser aceito. Por favor digite somente numeros positivos");
+		}
 		return this.produtoRepository.save(produto);
 	}
 	

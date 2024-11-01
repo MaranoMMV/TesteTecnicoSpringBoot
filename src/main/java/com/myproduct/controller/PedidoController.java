@@ -14,47 +14,46 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.myproduct.entitys.Produto;
-import com.myproduct.services.ProdutoService;
-
-import lombok.RequiredArgsConstructor;
+import com.myproduct.entitys.Pedido;
+import com.myproduct.entitys.dto.PedidoDTO;
+import com.myproduct.services.PedidoService;
 
 @RestController
-@RequestMapping("/api/produtos")
-public class ProdutoController {
+@RequestMapping("/api/pedidos")
+public class PedidoController {
+
 	
 	@Autowired
-	private ProdutoService produtoService;
+	private PedidoService pedidoService;
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Produto postProduto( @RequestBody Produto produto) {
-		return this.produtoService.saveProduto(produto);
+	public Pedido postPedido( @RequestBody PedidoDTO pedidoDTO) {
+		return this.pedidoService.salvarPedido(pedidoDTO);
 	}
 	
 	@GetMapping
 	@ResponseStatus(HttpStatus.OK)
-	public List<Produto> getListProduto() {
-		return this.produtoService.listProduto();
+	public List<Pedido> getPedidos(){
+		return this.pedidoService.listPedidos();
 	}
 	
 	@GetMapping("{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public Produto getProdutoById(@PathVariable Long id) {
-		return this.produtoService.findProdutoById(id);
+	public Pedido getPedidoById(@PathVariable Long id) {
+		return this.pedidoService.pedidoById(id);
 	}
 	
-	
-	@PutMapping
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void putProduto(@RequestBody Produto produto) {
-		this.produtoService.changeProduto(produto);
-	}
 	
 	@DeleteMapping("{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	public void deleteProduto(@PathVariable Long id) {
-		this.produtoService.deleteProdutoById(id);
+	public void deletePedido(@PathVariable Long id) {
+		this.pedidoService.deletePedido(id);
 	}
-
+	
+	@PutMapping
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void putPedido(@RequestBody PedidoDTO pedidoDTO) {
+		this.pedidoService.changePedido(pedidoDTO);
+	}
 }
