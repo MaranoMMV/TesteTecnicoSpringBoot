@@ -26,4 +26,6 @@ public class Pedido {
 	
 	@ManyToMany
 	private List<Produto> produtos = new ArrayList<>();
+	
+	private Double total;
 }

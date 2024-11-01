@@ -29,11 +29,14 @@ public class PedidoService {
 	public Pedido salvarPedido(PedidoDTO pedidoDTO) {
 		System.out.println(pedidoDTO.toString());
 		Pedido pedido = new Pedido();
+		Double total = 0.0;
 		for (Long idProduto : pedidoDTO.getIdProdutos()) {
 			Produto produto = this.produtoService.findProdutoById(idProduto);
 			if (produto.getQuantidadeEmEstoque() >= 1) {
 				pedido.getProdutos().add(produto);
-
+				
+				total += produto.getPreco();
+				
 				produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - 1);
 				this.produtoService.changeProduto(produto);
 			} else {
@@ -42,7 +45,7 @@ public class PedidoService {
 						"ocorreu um erro com o id: " + idProduto + " Verifique se o id inserido realmente existe! ou o item está com estoque");
 			}
 		}
-
+		pedido.setTotal(total);
 		pedido.setDataDoPedido(new Date());
 		return this.pedidoRepository.save(pedido);
 	}
@@ -66,19 +69,23 @@ public class PedidoService {
 	public void changePedido(PedidoDTO pedidoDTO) {
 		this.pedidoRepository.findById(pedidoDTO.getId()).map(pedidoAlterado -> {
 			pedidoAlterado.getProdutos().clear();
+			Double total = 0.0;
 			for (Long idProduto : pedidoDTO.getIdProdutos()) {
 				Produto produto = this.produtoService.findProdutoById(idProduto);
 				if (produto.getQuantidadeEmEstoque() >= 1) {
 					pedidoAlterado.getProdutos().add(produto);
+					total += produto.getPreco();
+					
 					produto.setQuantidadeEmEstoque(produto.getQuantidadeEmEstoque() - 1);
 					this.produtoService.changeProduto(produto);
 				} else {
 					throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE,
-							"ocorreu um erro com o id: " + idProduto + " Verifique se o id inserido realmente existe!");
+							"ocorreu um erro com o id: " + idProduto + " Verifique se o id inserido realmente existe! ou se há estoque o suficiente");
 				}
 			}
-			return pedidoAlterado;
+			pedidoAlterado.setTotal(total);
+			return this.pedidoRepository.save(pedidoAlterado);
 		}).orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Pedido com o id: " + pedidoDTO.getId() + " Não foi encontrado"));
 
-	}
+	} 
 }

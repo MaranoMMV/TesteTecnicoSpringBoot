@@ -48,10 +48,12 @@ public class Instantitation implements CommandLineRunner {
 		Pedido pedido1 = new Pedido();
 		pedido1.setDataDoPedido(new Date());
 		pedido1.getProdutos().addAll(Arrays.asList(produto1, produto2));
+		pedido1.setTotal( produto1.getPreco() + produto2.getPreco());
 		
 		Pedido pedido2 = new Pedido();
 		pedido2.setDataDoPedido(new Date());
 		pedido2.getProdutos().add(produto1);
+		pedido2.setTotal(produto1.getPreco());
 		
 		this.pedidoRepository.saveAll(Arrays.asList(pedido1, pedido2));
 	}
